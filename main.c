@@ -1,19 +1,19 @@
-#include "stdio.h"
-#include "stdlib.h"
 #include "source.h"
 
 int main()
 {
-    int length = 0;
-    User *data = init_data();
-    User tmp = create_user("Roman", 'M', 18, admin);
-    User tmp1 = create_user("Roman1", 'F', 19, moderator);
+    unsigned int data_length = 0;
+    unsigned int *data_length_ptr = &data_length;
 
-    print_user(tmp);
-    print_user(tmp1);
-
-    length = add_user(&data, tmp, length);
+    User *test = init_user("Test", 'M', 18, 0);
+    User **data = init_data();
     
-    free(data);
+    data = add_user(data, test, &data_length);
+    data = add_user(data, test, &data_length);
+    data = add_user(data, test, &data_length);
+
+    print_data(data, data_length);
+
+    delete_data(data, data_length);
     return 0;
 }

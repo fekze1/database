@@ -1,6 +1,10 @@
 #ifndef SOURCE_H
 #define SOURCE_H
 
+#include "stdio.h"
+#include "stdlib.h"
+#include "stdbool.h"
+
 enum user_type
 {
     admin = 0,
@@ -11,7 +15,8 @@ enum user_type
 
 typedef struct
 {
-    char *fullname;
+    unsigned int id;
+    char *name;
     char gender;
     unsigned int age;
     enum user_type type;
@@ -20,14 +25,20 @@ typedef struct
 
 char *get_type_name(enum user_type type);
 
-int add_user(User **data, User user, int length);
+bool check_user_existence(User **data, User *user, unsigned int data_length);
 
-User *init_data();
+User **add_user(User **data, User *user, unsigned int *data_length_ptr);
 
-User create_user(char *fullname, char gender, unsigned int age, enum user_type type);
+int find_length(User *data);
 
-void print_user(User user);
+User **init_data();
 
-void print_data(User *data);
+User *init_user(char *name, char gender, unsigned int age, enum user_type type);
+
+void print_user(User *user);
+
+void print_data(User **data, unsigned int data_length);
+
+void delete_data(User **data, unsigned int data_length);
 
 #endif
