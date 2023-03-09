@@ -26,6 +26,39 @@ char *get_type_name(enum user_type type)
 	return "WRONG TYPE";
 }
 
+int get_int_from_stdin(int max_symbols)
+{
+	//(*)
+    char users_amount_tmp[10];
+    unsigned int users_amount;
+    fgets(users_amount_tmp, 10, stdin);
+    users_amount = atoi(users_amount_tmp);
+}
+
+
+void gen_mode()
+{
+    printf("Input amount of users: ");
+    unsigned int users_amount = (unsigned int)get_int_from_stdin(10);
+    print_menu();
+}
+
+void std_mode()
+{
+    return;
+}
+
+void print_menu()
+{
+	printf("\n\t\t\t\033[40m\033[92m LIST OF COMMANDS \033[0m\n");
+	printf("\t\t\t\033[40m\033[92m1. ADD USER       \033[0m\n");
+	printf("\t\t\t\033[40m\033[92m2. DELETE USER    \033[0m\n");
+	printf("\t\t\t\033[40m\033[92m3. SORT DATABASE  \033[0m\n");
+	printf("\t\t\t\033[40m\033[92m4. CHANGE USER    \033[0m\n");
+	printf("\t\t\t\033[40m\033[92m5. PRINT DATA     \033[0m\n");
+	printf("\t\t\t\033[40m\033[92m6. PRINT USER     \033[0m\n");
+}
+
 bool check_user_existence(User **data, User *user, unsigned int data_length)
 {	
 	for (int i = 0; i < data_length; i++) if (data[i] == user) return true;

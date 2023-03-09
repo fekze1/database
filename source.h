@@ -21,6 +21,14 @@ typedef struct
 
 }User;
 
+int get_int_from_stdin(int max_symbols);
+
+void gen_mode();
+
+void std_mode();
+
+void print_menu();
+
 char *get_type_name(enum user_type type);
 
 bool check_user_existence(User **data, User *user, unsigned int data_length);
