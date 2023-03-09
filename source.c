@@ -1,4 +1,7 @@
 #include "source.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
 
 char *get_type_name(enum user_type type)
 {
@@ -88,6 +91,4 @@ void delete_data(User **data, unsigned int data_length)
 
 	free(data[0]);
 	free(data);
-	// for (int i = 0; i < data_length; i++) free(data[i]);
-	// free(data);
 }
