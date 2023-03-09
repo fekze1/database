@@ -40,3 +40,34 @@ enum user_type gen_type()
 {
     return rand_int_range(0, 3);
 }
+
+User *gen_user()
+{
+    return init_user(gen_name(), gen_gender(), gen_age(), gen_type());
+}
+
+User **gen_data(unsigned int data_amount)
+{   
+    //(*)
+
+    User **rand_data = (User **)calloc(data_amount, sizeof(User *));
+
+    for (int i = 0; i < data_amount; i++)
+    {
+        rand_data[i] = gen_user();
+        rand_data[i]->id = i + 1;
+    }
+
+    return rand_data;
+}
+
+void delete_rand_data(User **data, unsigned int data_length)
+{
+    for (int i = 0; i < data_length; i++)
+    {
+        free(data[i]->name);
+        free(data[i]);
+    }
+
+    free(data);
+}

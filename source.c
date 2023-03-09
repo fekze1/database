@@ -76,7 +76,7 @@ void print_user(User *user)
 	printf("\t\033[93mName:\033[0m %s\n", user->name);
 	printf("\t\033[93mGender:\033[0m %c\n", user->gender);
 	printf("\t\033[93mAge:\033[0m %u\n", user->age);
-	printf("\t\033[93mType:\033[0m %u\n\n", user->type);
+	printf("\t\033[93mType:\033[0m %s\n\n", get_type_name(user->type));
 }
 
 void print_data(User **data, unsigned int data_length)

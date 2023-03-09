@@ -7,5 +7,9 @@
 
 int main()
 {
-    
+    unsigned int length = 1000;
+    User **data = gen_data(length);
+    print_data(data, length);
+
+    delete_rand_data(data, length);
 }
