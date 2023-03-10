@@ -21,11 +21,13 @@ typedef struct
 
 }User;
 
-char *input_str();
-
-int get_int_from_stdin(int max_symbols);
+int input_str(char **string);
 
 void gen_mode();
+
+bool command_check(char *command_str);
+
+User *create_user();
 
 void std_mode();
 
@@ -34,6 +36,8 @@ void print_menu();
 char *get_type_name(enum user_type type);
 
 bool check_user_existence(User **data, User *user, unsigned int data_length);
+
+bool check_user_id_existence(User **data, unsigned int id, unsigned int data_length);
 
 void add_user(User ***data, User *user, unsigned int *data_length_ptr);
 
