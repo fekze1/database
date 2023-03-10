@@ -35,6 +35,8 @@ bool check_user_existence(User **data, User *user, unsigned int data_length);
 
 User **add_user(User **data, User *user, unsigned int *data_length_ptr);
 
+User **delete_user(User **data, unsigned int id, unsigned int *data_length_ptr);
+
 int find_length(User *data);
 
 User **init_data();
