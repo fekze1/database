@@ -1,7 +1,39 @@
 #include "source.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <stdbool.h>
+
+char *input_str() 
+{
+	char *string = (char *)malloc(1);
+	char buffer[81];
+	int n, str_length = 0;
+	*string = '\0';
+	
+	do
+	{
+		n = scanf("%80[^\n]", buffer);
+		
+		if(n < 0)
+		{
+			free(string);
+			string = NULL;
+			continue;
+		}
+
+		if(n == 0) scanf("%*c");
+
+		else 
+		{
+			str_length += strlen(buffer);
+			string = (char *)realloc(string, str_length + 1);
+			string = strcat(string, buffer);
+		}	
+	} while(n > 0);
+	
+	return string;
+}
 
 char *get_type_name(enum user_type type)
 {
@@ -26,20 +58,19 @@ char *get_type_name(enum user_type type)
 	return "WRONG TYPE";
 }
 
-int get_int_from_stdin(int max_symbols)
-{
-	//(*)
-    char users_amount_tmp[10];
-    unsigned int users_amount;
-    fgets(users_amount_tmp, 10, stdin);
-    users_amount = atoi(users_amount_tmp);
-}
-
-
 void gen_mode()
 {
-    printf("Input amount of users: ");
-    unsigned int users_amount = (unsigned int)get_int_from_stdin(10);
+
+}
+
+bool command_check(char *command_str)
+{
+	if ((strcmp(command_str, "1") != 0) && (strcmp(command_str, "2") != 0) && (strcmp(command_str, "3") != 0) && (strcmp(command_str, "4") != 0) && (strcmp(command_str, "5") != 0) && (strcmp(command_str, "6") != 0) && (strcmp(command_str, "7") != 0) && (strcmp(command_str, "8") != 0))
+	{
+		return false;
+	}
+
+	return true;
 }
 
 void std_mode()
@@ -47,33 +78,67 @@ void std_mode()
 	unsigned int data_length = 0;
 	User **data = NULL;
 	short int command = 0;
+	char *command_str;
+
 	while(command != 8)
 	{	
 		print_menu();
 		printf("Input command: ");
-		scanf("%hd", &command);
+
+		command_str = input_str();
+		if (!command_str) 
+		{	
+			free(data);
+			printf("\n");
+			exit(-1);
+		}
+
+		while (command_check(command_str) == false)
+		{
+			printf("\033[91mInvalid input, try again: \033[0m");
+			free(command_str);
+			command_str = input_str();
+
+			if (!command_str)
+			{
+				free(data);
+				printf("\n");
+				exit(-1);
+			}
+		}
+		
+		command = atoi(command_str);
+		free(command_str);
 
 		switch (command)
 		{
 			case 1:
+				if (!data) printf("\t\t\033[91m    YOU DID NOT INITIALIZE ANY DATABASE\033[0m\n");
+
+				else
+				{
+				}
 			break;
 
 			case 2:
-				printf("Input ID: ");
-				unsigned int id = (unsigned int)get_int_from_stdin(10);
-				delete_user(data, id, &data_length);
+				if (!data) printf("\t\t\033[91m    YOU DID NOT INITIALIZE ANY DATABASE\033[0m\n");
 			break;
 
 			case 3:
+				if (!data) printf("\t\t\033[91m    YOU DID NOT INITIALIZE ANY DATABASE\033[0m\n");
 			break;
 
 			case 4:
+				if (!data) printf("\t\t\033[91m    YOU DID NOT INITIALIZE ANY DATABASE\033[0m\n");
 			break;
 
 			case 5:
+				if (!data) printf("\t\t\033[91m    YOU DID NOT INITIALIZE ANY DATABASE\033[0m\n");
 			break;
 
+
 			case 6:
+				if (!data) printf("\t\t\033[91m    YOU DID NOT INITIALIZE ANY DATABASE\033[0m\n");
 			break;
 
 			case 7:
@@ -81,35 +146,51 @@ void std_mode()
 
 				if (data)
 				{	
-					char confirmation;
+					char *confirmation;
 					printf("\t\t\033[91mYOUR CURRENT DATABASE WILL BE DELETED\033[0m\n");
-					printf("\t\t\033[91mYOU WANT TO CONTINUE? (y/n)\033[0m\n");
+					printf("\t\t\033[91m   YOU WANT TO CONTINUE? (yes/no)\033[0m\n");
 					
 					printf("Input: ");
-					getchar();
-					confirmation = getchar();
-
-					while (confirmation != 'y' && confirmation != 'n')
+					confirmation = input_str();
+					if (!confirmation)
+					{
+						free(data);
+						printf("\n");
+						exit(-1);
+					}
+					
+					while ((strcmp(confirmation, "yes") != 0) && (strcmp(confirmation, "no") != 0))
 					{	
+						free(confirmation);
 						printf("Invalid input, try again: ");
-						confirmation = getchar();
+						confirmation = input_str();
+						if (!confirmation)
+						{	
+
+							free(data);
+							printf("\n");
+							exit(-1);
+						}
 					}
 
-					if (confirmation == 'y')
+					if (strcmp(confirmation, "yes") == 0)
 					{
 						delete_data(data, data_length);
 						confirm_flag = 1;
 					} 
 					else confirm_flag = 0;
+
+					free(confirmation);
 				}
 				if (confirm_flag == 1) data = init_data();
 			break;
 
 			case 8:
+				exit(0);
 			break;
 
 			default:
-				printf("\nInvalid input, try again TESTEST\n");
+				printf("\033[91mInvalid input, try again\033[0m");
 			break;
 		}
 	}
@@ -136,47 +217,45 @@ bool check_user_existence(User **data, User *user, unsigned int data_length)
 	return false;
 }
 
-User **add_user(User **data, User *user, unsigned int *data_length_ptr) 
+void add_user(User ***data, User *user, unsigned int *data_length_ptr) 
 {
 	//(*)
-	if (check_user_existence(data, user, *data_length_ptr))
+	if (check_user_existence(*data, user, *data_length_ptr))
 	{
 		printf("\033[92mUSER IS ALREADY IN THE DATABASE\033[0m\n");
-		return data;
+		return;
 	}
 
 	(*data_length_ptr)++;
-	data = (User **)realloc(data, *data_length_ptr * sizeof(User *));
-	data[*data_length_ptr - 1] = user;
-	data[*data_length_ptr - 1]->id = *data_length_ptr;
-
-	return data;
+	*data = (User **)realloc(*data, *data_length_ptr * sizeof(User *));
+	(*data)[*data_length_ptr - 1] = user;
+	(*data)[*data_length_ptr - 1]->id = *data_length_ptr;
 }
 
-User **delete_user(User **data, unsigned int id, unsigned int *data_length_ptr)
+void delete_user(User ***data, unsigned int id, unsigned int *data_length_ptr)
 {	
 	User *user;
 	int deleted_ind = 0;
 
 	for (int i = 0; i < *data_length_ptr; i++)
 	{
-		if (data[i]->id == id)
+		if ((*data)[i]->id == id)
 		{
-			user = data[i];
+			user = (*data)[i];
 			deleted_ind = i;
 		} 
 	}
 
 	for (int i = deleted_ind; i < *data_length_ptr - 1; i++)
 	{
-		data[i] = data[i + 1];
+		(*data)[i] = (*data)[i + 1];
 	}
 
 	(*data_length_ptr)--;
-	data = (User **)realloc(data, *data_length_ptr * sizeof(User **));
+	*data = (User **)realloc(*data, *data_length_ptr * sizeof(User **));
 
+	free(user->name);
 	free(user);
-	return data;
 }
 
 User **init_data()

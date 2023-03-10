@@ -21,6 +21,8 @@ typedef struct
 
 }User;
 
+char *input_str();
+
 int get_int_from_stdin(int max_symbols);
 
 void gen_mode();
@@ -33,9 +35,9 @@ char *get_type_name(enum user_type type);
 
 bool check_user_existence(User **data, User *user, unsigned int data_length);
 
-User **add_user(User **data, User *user, unsigned int *data_length_ptr);
+void add_user(User ***data, User *user, unsigned int *data_length_ptr);
 
-User **delete_user(User **data, unsigned int id, unsigned int *data_length_ptr);
+void delete_user(User ***data, unsigned int id, unsigned int *data_length_ptr);
 
 int find_length(User *data);
 

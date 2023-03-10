@@ -21,5 +21,5 @@ int main (int argc, char *argv[])
 		long_options, NULL)!=-1);
 
 	if (flag_generator) gen_mode();
-    std_mode();
+    else std_mode();
 }
