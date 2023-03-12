@@ -325,8 +325,8 @@ void std_mode()
 				}
 
 				delete_user(&data, id_deletion_ui, &data_length);
-
-				for (int i = id_deletion_ui - 1; i < data_length; i++) data[i]->id--;
+				system("clear");
+				printf("\t\t\033[92m     USER WAS SUCCESSFULLY DELETED\033[0m\n");
 			break;
 
 			case 3:
@@ -502,11 +502,12 @@ void add_user(User ***data, User *user, unsigned int *data_length_ptr)
 		printf("\033[92mUSER IS ALREADY IN THE DATABASE\033[0m\n");
 		return;
 	}
-
+	
 	(*data_length_ptr)++;
 	*data = (User **)realloc(*data, *data_length_ptr * sizeof(User *));
 	(*data)[*data_length_ptr - 1] = user;
-	(*data)[*data_length_ptr - 1]->id = *data_length_ptr;
+	(*data)[*data_length_ptr - 1]->id = LAST_ID + 1;
+	LAST_ID++;
 }
 
 void delete_user(User ***data, unsigned int id, unsigned int *data_length_ptr)
@@ -537,6 +538,7 @@ void delete_user(User ***data, unsigned int id, unsigned int *data_length_ptr)
 
 User **init_data()
 {
+	LAST_ID = 0;
 	User **data = (User **)calloc(1, sizeof(User *));
 	return data;
 }

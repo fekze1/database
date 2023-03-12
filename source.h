@@ -21,11 +21,15 @@ typedef struct
 
 }User;
 
+static unsigned int LAST_ID;
+
 bool input_str(char **string);
 
 void gen_mode();
 
 User *create_user();
+
+bool change_user_by_id(User ***data, unsigned int id);
 
 void std_mode();
 
