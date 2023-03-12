@@ -242,6 +242,56 @@ bool change_user_by_id(User ***data, unsigned int id)
 	return true;
 }
 
+int cmp_id(User **first_user,User **second_user)
+{	
+	return ((User *)(*first_user))->id - ((User *)(*second_user))->id;
+}
+
+int cmpr_id(User **first_user,User **second_user)
+{	
+	return -1 * (((User *)(*first_user))->id - ((User *)(*second_user))->id);
+}
+
+int cmp_name(User **first_user,User **second_user)
+{	
+	return strcmp(((User *)(*first_user))->name, ((User *)(*second_user))->name);
+}
+
+int cmpr_name(User **first_user,User **second_user)
+{	
+	return -1 * strcmp(((User *)(*first_user))->name, ((User *)(*second_user))->name);
+}
+
+int cmp_gender(User **first_user,User **second_user)
+{	
+	return -1 * (((User *)(*first_user))->gender, ((User *)(*second_user))->gender);
+}
+
+int cmpr_gender(User **first_user,User **second_user)
+{	
+	return ((User *)(*first_user))->gender, ((User *)(*second_user))->gender;
+}
+
+int cmp_age(User **first_user,User **second_user)
+{	
+	return ((User *)(*first_user))->age - ((User *)(*second_user))->age;
+}
+
+int cmpr_age(User **first_user,User **second_user)
+{	
+	return -1 * (((User *)(*first_user))->age - ((User *)(*second_user))->age);
+}
+
+int cmp_type(User **first_user,User **second_user)
+{	
+	return ((User *)(*first_user))->type - ((User *)(*second_user))->type;
+}
+
+int cmpr_type(User **first_user,User **second_user)
+{	
+	return -1 * (((User *)(*first_user))->type - ((User *)(*second_user))->type);
+}
+
 void std_mode()
 {	
 	unsigned int data_length = 0;
@@ -335,9 +385,64 @@ void std_mode()
 					system("clear");
 					printf("\t\t\033[91m    YOU DID NOT INITIALIZE ANY DATABASE\033[0m\n");
 					break;
-				} 
-			break;
+				}
 
+				system("clear");
+				print_sort_menu();
+
+				char *sort_parameter_str;
+
+				printf("Input command: ");
+				if (!input_str(&sort_parameter_str)) 
+				{	
+					delete_data(data, data_length);	
+					printf("\n");
+					exit(-1);
+				}
+				
+				int sort_parameter = atoi(sort_parameter_str);
+				free(sort_parameter_str);
+				
+				switch (sort_parameter)
+				{
+				case 1:
+					qsort(data, data_length, sizeof(User *), (int(*) (const void *, const void *)) cmp_id);
+				break;
+				case 2:
+					qsort(data, data_length, sizeof(User *), (int(*) (const void *, const void *)) cmpr_id);;
+				break;
+				case 3:
+					qsort(data, data_length, sizeof(User *), (int(*) (const void *, const void *)) cmp_name);
+				break;
+				case 4:
+					qsort(data, data_length, sizeof(User *), (int(*) (const void *, const void *)) cmpr_name);
+				break;
+				case 5:
+					qsort(data, data_length, sizeof(User *), (int(*) (const void *, const void *)) cmp_gender);
+				break;
+				case 6:
+					qsort(data, data_length, sizeof(User *), (int(*) (const void *, const void *)) cmpr_gender);
+				break;
+				case 7:
+					qsort(data, data_length, sizeof(User *), (int(*) (const void *, const void *)) cmp_age);
+				break;
+				case 8:
+					qsort(data, data_length, sizeof(User *), (int(*) (const void *, const void *)) cmpr_age);
+				break;
+				case 9:
+					qsort(data, data_length, sizeof(User *), (int(*) (const void *, const void *)) cmp_type);
+				break;
+				case 10:
+					qsort(data, data_length, sizeof(User *), (int(*) (const void *, const void *)) cmpr_type);
+				break;
+				default:
+					system("clear");
+					printf("\t\t\t\033[91m      INVALID INPUT\033[0m\n");
+				break;
+				}
+				system("clear");
+				printf("\t\t\033[92m     DATABASE WAS SUCCESFULLY SORTED\033[0m\n");
+			break;
 			case 4:
 				if (!data)
 				{
@@ -394,13 +499,54 @@ void std_mode()
 					system("clear");
 					printf("\t\t\033[91m    YOU DID NOT INITIALIZE ANY DATABASE\033[0m\n");
 					break;
-				} 
+				}
+				system("clear");
 				print_data(data, data_length);
 			break;
 
 
 			case 6:
-				if (!data) printf("\t\t\033[91m    YOU DID NOT INITIALIZE ANY DATABASE\033[0m\n");
+				if (!data)
+				{
+					system("clear");
+					printf("\t\t\033[91m    YOU DID NOT INITIALIZE ANY DATABASE\033[0m\n");
+					break;
+				}
+
+				printf("Input user`s ID: ");
+				char *id_print;
+				if(!input_str(&id_print))
+				{
+					delete_data(data, data_length);	
+					printf("\n");
+					exit(-1);
+				}
+
+				while ((unsigned int)atoi(id_print) <= 0)
+				{
+					printf("Invalid ID, try again: ");
+					free(id_print);
+
+					if (!(input_str(&id_print)))
+					{
+						delete_data(data, data_length);	
+						printf("\n");
+						exit(-1);
+					} 
+				}
+
+				unsigned int id_print_ui = (unsigned int)atoi(id_print);
+				free(id_print);
+
+				if (!check_user_id_existence(data, id_print_ui, data_length))
+				{	
+					system("clear");
+					printf("\t\t\033[91m    USER WITH THIS ID DOES NOT EXIST\033[0m\n");
+					break;
+				}
+				
+				system("clear");
+				print_user(data[id_print_ui - 1]);
 			break;
 
 			case 7:
@@ -478,6 +624,22 @@ void print_menu()
 	printf("\t\t\t\033[40m\033[92m6. PRINT USER             \033[0m\n");
 	printf("\t\t\t\033[40m\033[92m7. (RE)INITIALIZE DATABASE\033[0m\n");
 	printf("\t\t\t\033[40m\033[92m8. EXIT                   \033[0m\n");
+}
+
+
+void print_sort_menu()
+{
+	printf("\n\t\t    \033[40m\033[92m         LIST OF COMMANDS         \033[0m\n");
+	printf("\t\t    \033[40m\033[92m1. SORT BY ID (MIN -> MAX)        \033[0m\n");
+	printf("\t\t    \033[40m\033[92m2. SORT BY ID (MAX -> MIN)        \033[0m\n");
+	printf("\t\t    \033[40m\033[92m3. SORT BY NAME (A -> Z)          \033[0m\n");
+	printf("\t\t    \033[40m\033[92m4. SORT BY NAME (Z -> A)          \033[0m\n");
+	printf("\t\t    \033[40m\033[92m5. SORT BY GENDER (MALE -> FEMALE)\033[0m\n");
+	printf("\t\t    \033[40m\033[92m6. SORT BY GENDER (FEMALE -> MALE)\033[0m\n");
+	printf("\t\t    \033[40m\033[92m7. SORT BY AGE (MIN -> MAX)       \033[0m\n");
+	printf("\t\t    \033[40m\033[92m8. SORT BY AGE (MAX -> MIN)       \033[0m\n");
+	printf("\t\t    \033[40m\033[92m9. SORT BY TYPE (ADMIN -> BANNED) \033[0m\n");
+	printf("\t\t    \033[40m\033[92m10. SORT BY TYPE (BANNED -> ADMIN)\033[0m\n");
 }
 
 bool check_user_existence(User **data, User *user, unsigned int data_length)
@@ -569,6 +731,7 @@ void print_user(User *user)
 void print_data(User **data, unsigned int data_length)
 {	
 	// (*)
+	if (*data)
 	for (int i = 0; i < data_length; i++) print_user(data[i]);
 }
 

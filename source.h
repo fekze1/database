@@ -35,6 +35,8 @@ void std_mode();
 
 void print_menu();
 
+void print_sort_menu();
+
 char *get_type_name(enum user_type type);
 
 bool check_user_existence(User **data, User *user, unsigned int data_length);
