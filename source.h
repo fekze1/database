@@ -29,7 +29,7 @@ void gen_mode();
 
 User *create_user();
 
-bool change_user_by_id(User ***data, unsigned int id);
+bool change_user_by_id(User **data, unsigned int data_length, unsigned int id);
 
 void std_mode();
 

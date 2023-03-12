@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 #include <stdbool.h>
 
 bool input_str(char **string) 
@@ -36,6 +37,13 @@ bool input_str(char **string)
 	if (!(*string)) return false;
 	
 	return true;
+}
+
+User *get_user_by_id(User **data, unsigned int data_length, unsigned int id)
+{
+	for (int i = 0; i < data_length; i++) if (data[i]->id == id) return data[i];
+
+	return NULL;
 }
 
 char *get_type_name(enum user_type type)
@@ -126,9 +134,11 @@ User *create_user()
 	return init_user(name, gender_ch, age_ui, 2);
 }
 
-bool change_user_by_id(User ***data, unsigned int id)
+bool change_user_by_id(User **data, unsigned int data_length, unsigned int id)
 {
-	print_user((*data)[id - 1]);
+	User *user = get_user_by_id(data, data_length, id);
+
+	print_user(user);
 
 	char *parameter;
 	printf("Parameter to change (name/gender/age): ");
@@ -173,8 +183,8 @@ bool change_user_by_id(User ***data, unsigned int id)
 			} 
 		}
 
-		free((*data)[id - 1]->name);
-		(*data)[id - 1]->name = new_name;
+		free(user->name);
+		user->name = new_name;
 
 		free(parameter);
 		return true;
@@ -203,7 +213,7 @@ bool change_user_by_id(User ***data, unsigned int id)
 			} 
 		}
 
-		(*data)[id - 1]->gender = new_gender[0];
+		user->gender = new_gender[0];
 
 		free(new_gender);
 		free(parameter);
@@ -230,7 +240,7 @@ bool change_user_by_id(User ***data, unsigned int id)
 		} 
 	}
 
-	(*data)[id - 1]->age = (unsigned int)atoi(new_age);
+	user->age = (unsigned int)atoi(new_age);
 	
 	free(new_age);
 	free(parameter);
@@ -259,12 +269,12 @@ int cmpr_name(User **first_user,User **second_user)
 
 int cmp_gender(User **first_user,User **second_user)
 {	
-	return -1 * (((User *)(*first_user))->gender, ((User *)(*second_user))->gender);
+	return -1 * ((((User *)(*first_user))->gender - ((User *)(*second_user))->gender));
 }
 
 int cmpr_gender(User **first_user,User **second_user)
 {	
-	return ((User *)(*first_user))->gender, ((User *)(*second_user))->gender;
+	return (((User *)(*first_user))->gender - ((User *)(*second_user))->gender);
 }
 
 int cmp_age(User **first_user,User **second_user)
@@ -287,6 +297,11 @@ int cmpr_type(User **first_user,User **second_user)
 	return -1 * (((User *)(*first_user))->type - ((User *)(*second_user))->type);
 }
 
+void print_user_in_file(FILE *file, User *user)
+{
+	fprintf(file, "\nID: %u, NAME: %s, GENDER: %c, AGE: %u, TYPE: %s\n", user->id, user->name, user->gender, user->age, get_type_name(user->type));
+}
+
 void gen_mode()
 {
 	unsigned int data_length = 0;
@@ -294,7 +309,7 @@ void gen_mode()
 	short int command = 0;
 	char *command_str;
 
-	while(command != 5)
+	while(command != 6)
 	{	
 		print_gen_menu();
 		printf("Input command: ");
@@ -335,48 +350,98 @@ void gen_mode()
 				int sort_parameter = atoi(sort_parameter_str);
 				free(sort_parameter_str);
 				
+				clock_t start_sort;
+				clock_t finish_sort;
+				long double all_sort;
+
 				switch (sort_parameter)
 				{
 				case 1:
+					start_sort = clock();
 					qsort(data, data_length, sizeof(User *), (int(*) (const void *, const void *)) cmp_id);
+					finish_sort = clock();
 				break;
 				case 2:
-					qsort(data, data_length, sizeof(User *), (int(*) (const void *, const void *)) cmpr_id);;
+					start_sort = clock();
+					qsort(data, data_length, sizeof(User *), (int(*) (const void *, const void *)) cmpr_id);
+					finish_sort = clock();
 				break;
 				case 3:
+					start_sort = clock();
 					qsort(data, data_length, sizeof(User *), (int(*) (const void *, const void *)) cmp_name);
+					finish_sort = clock();
 				break;
 				case 4:
+					start_sort = clock();
 					qsort(data, data_length, sizeof(User *), (int(*) (const void *, const void *)) cmpr_name);
+					finish_sort = clock();
 				break;
 				case 5:
+					start_sort = clock();
 					qsort(data, data_length, sizeof(User *), (int(*) (const void *, const void *)) cmp_gender);
+					finish_sort = clock();
 				break;
 				case 6:
+					start_sort = clock();
 					qsort(data, data_length, sizeof(User *), (int(*) (const void *, const void *)) cmpr_gender);
+					finish_sort = clock();
 				break;
 				case 7:
+					start_sort = clock();
 					qsort(data, data_length, sizeof(User *), (int(*) (const void *, const void *)) cmp_age);
+					finish_sort = clock();
 				break;
 				case 8:
+					start_sort = clock();
 					qsort(data, data_length, sizeof(User *), (int(*) (const void *, const void *)) cmpr_age);
+					finish_sort = clock();
 				break;
 				case 9:
+					start_sort = clock();
 					qsort(data, data_length, sizeof(User *), (int(*) (const void *, const void *)) cmp_type);
+					finish_sort = clock();
 				break;
 				case 10:
+					start_sort = clock();
 					qsort(data, data_length, sizeof(User *), (int(*) (const void *, const void *)) cmpr_type);
+					finish_sort = clock();
 				break;
 				default:
 					system("clear");
 					printf("\t\t\t\033[91m      INVALID INPUT\033[0m\n");
 				break;
 				}
+				all_sort = (long double)(finish_sort - start_sort) / CLOCKS_PER_SEC;
 				system("clear");
 				printf("\t\t\033[92m     DATABASE WAS SUCCESFULLY SORTED\033[0m\n");
+				printf("\t\t\033[92m      TIME SPENT: %.7Lf seconds\033[0m\n", all_sort);
 			break;
 
 			case 2:
+				FILE *output_file = fopen("DATABASE.txt", "w");
+				if (!output_file)
+				{
+					printf("\033[91mSOME ERROR HAPPENED WHILE OPENING FILE\033[0m");
+					delete_data(data, data_length);
+					printf("/n");
+					exit(-1);
+				}
+
+
+				clock_t start_write = clock();
+				for (int i = 0; i < data_length; i++) print_user_in_file(output_file, data[i]);
+				clock_t finish_write = clock();
+
+				long double all_write = (long double)(finish_write - start_write) / CLOCKS_PER_SEC;
+
+				fclose(output_file);
+
+				system("clear");
+				printf("\t\t\033[92mDATABASE WAS SUCCESSFULLY WRITED TO \"DATABASE.txt\"\033[0m\n");
+				printf("\t\t\033[92m              TIME SPENT: %0.7Lf\033[0m\n", all_write);
+			break;
+
+			case 3:
 				if (!data)
 				{
 					system("clear");
@@ -386,8 +451,7 @@ void gen_mode()
 				system("clear");
 				print_data(data, data_length);
 			break;
-
-			case 3:
+			case 4:
 				if (!data)
 				{
 					system("clear");
@@ -428,9 +492,10 @@ void gen_mode()
 				}
 				
 				system("clear");
-				print_user(data[id_print_ui - 1]);
+				print_user(get_user_by_id(data, data_length, id_print_ui));
 			break;
-			case 4:
+
+			case 5:
 				int confirm_flag = 1;
 
 				if (data)
@@ -494,15 +559,21 @@ void gen_mode()
 						} 
 					}
 
+					clock_t start_gen = clock();
 					data = gen_data(atoi(amount));
+					clock_t finish_gen = clock();
+					
 					data_length = atoi(amount);
+					
+					long double all_gen = (long double)(finish_gen - start_gen) / CLOCKS_PER_SEC;
+					
 					free(amount);
 					system("clear");
 					printf("\t\t\033[92m   DATABASE WAS SUCCESSFULLY INITIALIZED\033[0m\n");
-				} 
+					printf("\t\t\033[92m            TIME SPENT: %0.7Lf\033[0m\n", all_gen);
+				}
 			break;
-
-			case 5:
+			case 6:
 				system("clear");
 				printf("\t\t\033[92m   DELETING DATABASE, PROGRAM COMPLETION\033[0m\n");
 			break;
@@ -709,7 +780,7 @@ void std_mode()
 					break;
 				}
 
-				if(!change_user_by_id(&data, id_change_ui))
+				if(!change_user_by_id(data, data_length, id_change_ui))
 				{
 					delete_data(data, data_length);
 					printf("\n");
@@ -772,7 +843,7 @@ void std_mode()
 				}
 				
 				system("clear");
-				print_user(data[id_print_ui - 1]);
+				print_user(get_user_by_id(data, data_length, id_print_ui));
 			break;
 
 			case 7:
@@ -854,12 +925,13 @@ void print_std_menu()
 
 void print_gen_menu()
 {
-	printf("\n\t\t\t\033[40m\033[92m    LIST OF COMMANDS    \033[0m\n");
-	printf("\t\t\t\033[40m\033[92m1. SORT DATABASE        \033[0m\n");
-	printf("\t\t\t\033[40m\033[92m2. PRINT DATABASE       \033[0m\n");
-	printf("\t\t\t\033[40m\033[92m3. PRINT USER           \033[0m\n");
-	printf("\t\t\t\033[40m\033[92m4. (RE)GENERATE DATABASE\033[0m\n");
-	printf("\t\t\t\033[40m\033[92m5. EXIT                 \033[0m\n");
+	printf("\n\t\t\t\033[40m\033[92m     LIST OF COMMANDS    \033[0m\n");
+	printf("\t\t\t\033[40m\033[92m1. SORT DATABASE         \033[0m\n");
+	printf("\t\t\t\033[40m\033[92m2. PRINT DATABASE IN FILE\033[0m\n");
+	printf("\t\t\t\033[40m\033[92m3. PRINT DATABASE        \033[0m\n");
+	printf("\t\t\t\033[40m\033[92m4. PRINT USER            \033[0m\n");
+	printf("\t\t\t\033[40m\033[92m5. (RE)GENERATE DATABASE \033[0m\n");
+	printf("\t\t\t\033[40m\033[92m6. EXIT                  \033[0m\n");
 }
 
 void print_sort_menu()
