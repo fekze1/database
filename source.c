@@ -1,4 +1,5 @@
 #include "source.h"
+#include "datagen.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -58,12 +59,6 @@ char *get_type_name(enum user_type type)
 		break;
 	}
 	return "WRONG TYPE";
-}
-
-void gen_mode()
-{
-
-	exit(0);
 }
 
 User *create_user()
@@ -292,6 +287,237 @@ int cmpr_type(User **first_user,User **second_user)
 	return -1 * (((User *)(*first_user))->type - ((User *)(*second_user))->type);
 }
 
+void gen_mode()
+{
+	unsigned int data_length = 0;
+	User **data = NULL;
+	short int command = 0;
+	char *command_str;
+
+	while(command != 5)
+	{	
+		print_gen_menu();
+		printf("Input command: ");
+
+		if (!input_str(&command_str)) 
+		{	
+			delete_data(data, data_length);	
+			printf("\n");
+			exit(-1);
+		}
+		
+		command = atoi(command_str);
+		free(command_str);
+
+		switch (command)
+		{
+			case 1:
+				if (!data)
+				{
+					system("clear");
+					printf("\t\t\033[91m    YOU DID NOT INITIALIZE ANY DATABASE\033[0m\n");
+					break;
+				}
+
+				system("clear");
+				print_sort_menu();
+
+				char *sort_parameter_str;
+
+				printf("Input command: ");
+				if (!input_str(&sort_parameter_str)) 
+				{	
+					delete_data(data, data_length);	
+					printf("\n");
+					exit(-1);
+				}
+				
+				int sort_parameter = atoi(sort_parameter_str);
+				free(sort_parameter_str);
+				
+				switch (sort_parameter)
+				{
+				case 1:
+					qsort(data, data_length, sizeof(User *), (int(*) (const void *, const void *)) cmp_id);
+				break;
+				case 2:
+					qsort(data, data_length, sizeof(User *), (int(*) (const void *, const void *)) cmpr_id);;
+				break;
+				case 3:
+					qsort(data, data_length, sizeof(User *), (int(*) (const void *, const void *)) cmp_name);
+				break;
+				case 4:
+					qsort(data, data_length, sizeof(User *), (int(*) (const void *, const void *)) cmpr_name);
+				break;
+				case 5:
+					qsort(data, data_length, sizeof(User *), (int(*) (const void *, const void *)) cmp_gender);
+				break;
+				case 6:
+					qsort(data, data_length, sizeof(User *), (int(*) (const void *, const void *)) cmpr_gender);
+				break;
+				case 7:
+					qsort(data, data_length, sizeof(User *), (int(*) (const void *, const void *)) cmp_age);
+				break;
+				case 8:
+					qsort(data, data_length, sizeof(User *), (int(*) (const void *, const void *)) cmpr_age);
+				break;
+				case 9:
+					qsort(data, data_length, sizeof(User *), (int(*) (const void *, const void *)) cmp_type);
+				break;
+				case 10:
+					qsort(data, data_length, sizeof(User *), (int(*) (const void *, const void *)) cmpr_type);
+				break;
+				default:
+					system("clear");
+					printf("\t\t\t\033[91m      INVALID INPUT\033[0m\n");
+				break;
+				}
+				system("clear");
+				printf("\t\t\033[92m     DATABASE WAS SUCCESFULLY SORTED\033[0m\n");
+			break;
+
+			case 2:
+				if (!data)
+				{
+					system("clear");
+					printf("\t\t\033[91m    YOU DID NOT INITIALIZE ANY DATABASE\033[0m\n");
+					break;
+				}
+				system("clear");
+				print_data(data, data_length);
+			break;
+
+			case 3:
+				if (!data)
+				{
+					system("clear");
+					printf("\t\t\033[91m    YOU DID NOT INITIALIZE ANY DATABASE\033[0m\n");
+					break;
+				}
+
+				printf("Input user`s ID: ");
+				char *id_print;
+				if(!input_str(&id_print))
+				{
+					delete_data(data, data_length);	
+					printf("\n");
+					exit(-1);
+				}
+
+				while ((unsigned int)atoi(id_print) <= 0)
+				{
+					printf("Invalid ID, try again: ");
+					free(id_print);
+
+					if (!(input_str(&id_print)))
+					{
+						delete_data(data, data_length);	
+						printf("\n");
+						exit(-1);
+					} 
+				}
+
+				unsigned int id_print_ui = (unsigned int)atoi(id_print);
+				free(id_print);
+
+				if (!check_user_id_existence(data, id_print_ui, data_length))
+				{	
+					system("clear");
+					printf("\t\t\033[91m    USER WITH THIS ID DOES NOT EXIST\033[0m\n");
+					break;
+				}
+				
+				system("clear");
+				print_user(data[id_print_ui - 1]);
+			break;
+			case 4:
+				int confirm_flag = 1;
+
+				if (data)
+				{	
+					char *confirmation;
+					printf("\t\t\033[91mYOUR CURRENT DATABASE WILL BE DELETED\033[0m\n");
+					printf("\t\t\033[91m   YOU WANT TO CONTINUE? (yes/no)\033[0m\n");
+					
+					printf("Input: ");
+					
+					if (!input_str(&confirmation))
+					{
+						delete_data(data, data_length);	
+						printf("\n");
+						exit(-1);
+					}
+					
+					while ((strcmp(confirmation, "yes") != 0) && (strcmp(confirmation, "no") != 0))
+					{	
+						free(confirmation);
+						printf("Invalid input, try again: ");
+
+						if (!input_str(&confirmation))
+						{	
+							delete_data(data, data_length);	
+							printf("\n");
+							exit(-1);
+						}
+					}
+
+					if (strcmp(confirmation, "yes") == 0)
+					{
+						delete_data(data, data_length);
+						confirm_flag = 1;
+					} 
+					else confirm_flag = 0;
+
+					free(confirmation);
+				}
+				if (confirm_flag == 1)
+				{
+					char *amount;
+					printf("Input amount of users: ");
+					if (!(input_str(&amount)))
+					{
+						free(amount);
+						delete_data(data, data_length);
+						exit(-1);
+					} 
+
+					while (atoi(amount) <= 0)
+					{
+						printf("Invalid amount, try again: ");
+						free(amount);
+
+						if (!(input_str(&amount)))
+						{
+							free(amount);
+							delete_data(data, data_length);
+							exit(-1);
+						} 
+					}
+
+					data = gen_data(atoi(amount));
+					data_length = atoi(amount);
+					free(amount);
+					system("clear");
+					printf("\t\t\033[92m   DATABASE WAS SUCCESSFULLY INITIALIZED\033[0m\n");
+				} 
+			break;
+
+			case 5:
+				system("clear");
+				printf("\t\t\033[92m   DELETING DATABASE, PROGRAM COMPLETION\033[0m\n");
+			break;
+			default:
+				system("clear");
+				printf("\t\t\t\033[91m      INVALID INPUT\033[0m\n");
+			break;
+		}
+	}
+
+	delete_data(data, data_length);	
+
+	exit(0);
+}
+
 void std_mode()
 {	
 	unsigned int data_length = 0;
@@ -301,7 +527,7 @@ void std_mode()
 
 	while(command != 8)
 	{	
-		print_menu();
+		print_std_menu();
 		printf("Input command: ");
 
 		if (!input_str(&command_str)) 
@@ -613,7 +839,7 @@ void std_mode()
 	delete_data(data, data_length);	
 }
 
-void print_menu()
+void print_std_menu()
 {
 	printf("\n\t\t\t\033[40m\033[92m     LIST OF COMMANDS     \033[0m\n");
 	printf("\t\t\t\033[40m\033[92m1. ADD USER               \033[0m\n");
@@ -626,6 +852,15 @@ void print_menu()
 	printf("\t\t\t\033[40m\033[92m8. EXIT                   \033[0m\n");
 }
 
+void print_gen_menu()
+{
+	printf("\n\t\t\t\033[40m\033[92m    LIST OF COMMANDS    \033[0m\n");
+	printf("\t\t\t\033[40m\033[92m1. SORT DATABASE        \033[0m\n");
+	printf("\t\t\t\033[40m\033[92m2. PRINT DATABASE       \033[0m\n");
+	printf("\t\t\t\033[40m\033[92m3. PRINT USER           \033[0m\n");
+	printf("\t\t\t\033[40m\033[92m4. (RE)GENERATE DATABASE\033[0m\n");
+	printf("\t\t\t\033[40m\033[92m5. EXIT                 \033[0m\n");
+}
 
 void print_sort_menu()
 {
@@ -641,6 +876,8 @@ void print_sort_menu()
 	printf("\t\t    \033[40m\033[92m9. SORT BY TYPE (ADMIN -> BANNED) \033[0m\n");
 	printf("\t\t    \033[40m\033[92m10. SORT BY TYPE (BANNED -> ADMIN)\033[0m\n");
 }
+
+
 
 bool check_user_existence(User **data, User *user, unsigned int data_length)
 {	

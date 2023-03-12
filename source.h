@@ -33,7 +33,9 @@ bool change_user_by_id(User ***data, unsigned int id);
 
 void std_mode();
 
-void print_menu();
+void print_std_menu();
+
+void print_gen_menu();
 
 void print_sort_menu();
 
