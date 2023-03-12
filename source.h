@@ -21,11 +21,9 @@ typedef struct
 
 }User;
 
-int input_str(char **string);
+bool input_str(char **string);
 
 void gen_mode();
-
-bool command_check(char *command_str);
 
 User *create_user();
 

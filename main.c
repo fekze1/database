@@ -21,6 +21,9 @@ int main (int argc, char *argv[])
 	while (getopt_long(argc, argv, short_options,
 		long_options, NULL)!=-1);
 
+	system("clear");
+
 	if (flag_generator) gen_mode();
-    else std_mode();
+    
+	std_mode();
 }
