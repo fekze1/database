@@ -2,6 +2,7 @@
 #define SOURCE_H
 
 #include <stdbool.h>
+#include <stdio.h>
 
 enum user_type
 {
@@ -29,7 +30,27 @@ void gen_mode();
 
 User *create_user();
 
-bool change_user_by_id(User **data, unsigned int data_length, unsigned int id);
+int cmp_id(User **first_user,User **second_user);
+
+int cmpr_id(User **first_user,User **second_user);
+
+int cmp_name(User **first_user,User **second_user);
+
+int cmpr_name(User **first_user,User **second_user);
+
+int cmp_gender(User **first_user,User **second_user);
+
+int cmpr_gender(User **first_user,User **second_user);
+
+int cmp_age(User **first_user,User **second_user);
+
+int cmpr_age(User **first_user,User **second_user);
+
+int cmp_type(User **first_user,User **second_user);
+
+int cmpr_type(User **first_user,User **second_user);
+
+void print_user_in_file(FILE *file, User *user);
 
 void std_mode();
 
@@ -40,25 +61,5 @@ void print_gen_menu();
 void print_sort_menu();
 
 char *get_type_name(enum user_type type);
-
-bool check_user_existence(User **data, User *user, unsigned int data_length);
-
-bool check_user_id_existence(User **data, unsigned int id, unsigned int data_length);
-
-void add_user(User ***data, User *user, unsigned int *data_length_ptr);
-
-void delete_user(User ***data, unsigned int id, unsigned int *data_length_ptr);
-
-int find_length(User *data);
-
-User **init_data();
-
-User *init_user(char *name, char gender, unsigned int age, enum user_type type);
-
-void print_user(User *user);
-
-void print_data(User **data, unsigned int data_length);
-
-void delete_data(User **data, unsigned int data_length);
 
 #endif

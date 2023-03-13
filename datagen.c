@@ -1,4 +1,5 @@
 #include "source.h"
+#include "data_base.h"
 #include "datagen.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -7,7 +8,6 @@
 
 int rand_int_range(int min, int max)
 {   
-    //(*)
     srand(clock());
     return (min + rand()%(max - min + 1));
 }
@@ -48,8 +48,6 @@ User *gen_user()
 
 User **gen_data(unsigned int data_amount)
 {   
-    //(*)
-
     User **rand_data = (User **)calloc(data_amount, sizeof(User *));
 
     for (int i = 0; i < data_amount; i++)
